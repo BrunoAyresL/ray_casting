@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include "map_create.c"
+
 void clear_screen() {
     printf("\033[H\033[J");
 }
@@ -20,75 +22,31 @@ typedef struct {
 } IntVector;
 
 
-#define mapWIDTH 48
-#define mapHEIGHT 24
 #define WIDTH 800
 #define HEIGHT 200
 
-int world_map[mapWIDTH][mapHEIGHT] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,3,3,3,3},
-    {1,0,0,0,1,0,0,0,0,0,0,0,3,3,0,0,1,0,3,0,4,0,0,3},
-    {1,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,1,0,3,0,0,0,0,3},
-    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,3,0,0,0,1,3},
-    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,3,0,0,0,0,3},
-    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,3},
-    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,3},
-    {1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,3,3,3},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
-    {1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,2,2,2,2,2,2,1},
-    {1,1,1,0,1,1,1,0,0,3,0,0,2,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,1},
-    {3,0,0,0,0,0,0,0,0,3,0,0,0,3,0,0,0,1,0,0,1,0,1,1},
-    {3,0,0,0,0,0,0,0,0,3,0,0,0,3,0,0,0,1,0,0,1,0,1,1},
-    {3,0,0,0,0,0,0,0,0,3,3,0,3,3,0,0,0,1,0,0,0,0,0,1},
-    {3,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
-    {3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
-    {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {2,2,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,2,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,2,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,2,2,2,1},
-    {2,0,0,2,0,0,3,3,3,3,3,0,0,3,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,1},
-    {2,0,2,2,2,2,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,0,0,0,2,0,0,3,3,3,3,3,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,0,0,1},
-    {2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,0,1},
-    {2,0,0,0,2,0,2,2,2,0,0,2,2,4,4,4,4,0,4,0,4,0,0,4},
-    {2,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,4},
-    {2,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4}
-};
+
+typedef struct {
+    Vector pos;
+    Vector size;
+} Object;
+
+
 
 int main() {
-    Vector pos;
-    pos.x = 3.4;
-    pos.y = 6.2;
-    Vector direction;
-    direction.x = -1;
-    direction.y = 0;
-    Vector plane;
-    plane.x = 0;
-    plane.y = 0.60;
+
+    // carregar mapa
+
+
+
+
+
+
+    Vector pos = {3.4, 6.2};
+    Vector direction = {-1, 0};
+    Vector plane = {0, 0.60};
 
     float rot_speed = 0.011;
-    float move_speed = 0.15;
     float screen_middle = HEIGHT/2;
 
     float mouseX = 0;
@@ -99,25 +57,33 @@ int main() {
     HANDLE hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
     SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleActiveScreenBuffer(hConsole);
-    DWORD dwBytesWritten = 0;
     COORD buffer_size = {WIDTH, HEIGHT};
     COORD screen_pos = {0, 0};
     SMALL_RECT write_region = {0, 0, WIDTH-1, HEIGHT-1};
 
+    int render_map = 1;
+    int tab_state = 0;
+
     int camera_height = 0;
 
+    float zBuffer[WIDTH];
+
+    Object test_obj;
+    Vector obj_pos = {6,8};
+    Vector obj_size = {50, 100};
+    test_obj.pos = obj_pos;
+    test_obj.size = obj_size;
+    Object objects[1] = {test_obj};
     int loop = 1;
     while (loop) {
         
+
+
         for (int x = 0; x < WIDTH; x++) {
             float cameraX = 2 * x / (float)WIDTH - 1;
-            Vector ray;
-            ray.x = direction.x + plane.x * cameraX;
-            ray.y = direction.y + plane.y * cameraX;
+            Vector ray = {direction.x + plane.x * cameraX, direction.y + plane.y * cameraX};
             
-            IntVector map;
-            map.x = (int) pos.x;
-            map.y = (int) pos.y;
+            IntVector map = {(int) pos.x, (int) pos.y};
             
             Vector side_dist;
             Vector delta_dist;
@@ -160,6 +126,8 @@ int main() {
             if (side == 0) perp_wall_dist = (side_dist.x - delta_dist.x);
             else           perp_wall_dist = (side_dist.y - delta_dist.y);
 
+            zBuffer[x] = perp_wall_dist;
+
             int line_height = (int) HEIGHT / perp_wall_dist;
             int max = screen_middle - line_height;
             int min = HEIGHT - max + camera_height;
@@ -192,6 +160,8 @@ int main() {
                     if (side == 1) color = color | FOREGROUND_INTENSITY;
 
                 } else {
+                    // floor
+
                     ascii_char = 249;
                     color = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
                 }
@@ -200,6 +170,64 @@ int main() {
             }
         } 
 
+
+        // objects
+         
+        for (int i = 0; i < 1; i++) {
+            float obj_dist = (pos.x - objects[i].pos.x) * (pos.x - objects[i].pos.x) + (pos.y - objects[i].pos.y) * (pos.y - objects[i].pos.y);
+            if (obj_dist < 3.0) continue;
+            Vector obj_pos = {objects[i].pos.x - pos.x, objects[i].pos.y - pos.y};
+
+            float inv_d = 1.0 / (plane.x * direction.y - direction.x * plane.y);
+            Vector transform = {inv_d * (direction.y * obj_pos.x - direction.x * obj_pos.y), inv_d * (-plane.y * obj_pos.x + plane.x * obj_pos.y)};
+            
+            int obj_screen_x = (int) (WIDTH /2) * (1 + transform.x / transform.y); 
+            if (obj_screen_x < 0 || obj_screen_x >= WIDTH) continue;
+            // height
+            int obj_height = (int) abs(HEIGHT / transform.y);
+            int draw_start_y = screen_middle - obj_height + camera_height;
+            if (draw_start_y < 0) draw_start_y = 0;
+            int draw_end_y = screen_middle + obj_height + camera_height;
+            if (draw_end_y >= HEIGHT) draw_end_y = HEIGHT - 1;
+
+
+            // width
+            int obj_width = obj_height;
+            int draw_start_x = -obj_width/2 + obj_screen_x;
+            if (draw_start_x < 0) draw_start_x = 0;
+            int draw_end_x = obj_width / 2 + obj_screen_x;
+            if (draw_end_x >= WIDTH) draw_end_x = WIDTH - 1;
+
+            printf("\nmax X: %d\t min X: %d\nmax Y: %d\tmin Y: %d\nobject width: %d\n", draw_start_x, draw_end_x, draw_start_y, draw_end_y, obj_width);
+
+            if (draw_end_x < draw_start_x || draw_end_y < draw_start_y) continue;
+
+            for (int x = draw_start_x; x < draw_end_x; x++) {
+                if (transform.y > 0 && x > 0 && x < WIDTH && transform.y < zBuffer[x]) {
+                    for (int y = draw_start_y; y < draw_end_y; y++) {
+                        screen[y * WIDTH + x].Char.AsciiChar = 219;
+                        screen[y * WIDTH + x].Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN;
+                    }
+                }
+            }        
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+        float move_speed = 0.17;
+
+        if (GetAsyncKeyState((unsigned short)16) * 0x8000) {
+           move_speed = 0.3; 
+        }
 
         if (GetAsyncKeyState((unsigned short)'W') & 0x8000) {
             pos.x += move_speed * (direction.x);
@@ -239,8 +267,22 @@ int main() {
         if (GetAsyncKeyState((unsigned short)17) & 0x8000) {
             camera_height -= 2;
         } 
-
         
+        if (GetAsyncKeyState((unsigned short)116) & 0x8000) {
+            plane.y += 0.01;
+        } 
+        if (GetAsyncKeyState((unsigned short)117) & 0x8000) {
+            plane.y -= 0.01;
+        } 
+
+        if ((GetAsyncKeyState((unsigned short)9) & 0x8000) != 0) {
+            tab_state = 1;
+        } else if (tab_state == 1){
+            if (render_map) render_map = 0;
+            else render_map = 1;
+            tab_state = 0;
+        }
+
         float mouse_diff = 0;
         INPUT_RECORD in_buffer[32];
         DWORD events = 0;
@@ -271,22 +313,24 @@ int main() {
         }
 
         // map
-        for (int i = 0; i < mapHEIGHT; i++) {
-            for (int ii = 0; ii < mapWIDTH * 2; ii++) {
-                if (world_map[ii/2][i] > 0) {
-                    screen[i * WIDTH + ii].Char.AsciiChar = 219;
-                    screen[i * WIDTH + ii].Attributes =   FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;
+        if (render_map) {
+            for (int i = 0; i < mapHEIGHT; i++) {
+                for (int ii = 0; ii < mapWIDTH * 2; ii++) {
+                    if (world_map[ii/2][i] > 0) {
+                        screen[i * WIDTH + ii].Char.AsciiChar = 219;
+                        screen[i * WIDTH + ii].Attributes =   FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;
 
+                    }
                 }
             }
+            screen[(int)pos.y * WIDTH + (int)pos.x * 2].Char.AsciiChar = 219;
+            screen[(int)pos.y * WIDTH + (int)pos.x * 2].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+            screen[(int)pos.y * WIDTH + (int)pos.x * 2 + 1].Char.AsciiChar = 219;
+            screen[(int)pos.y * WIDTH + (int)pos.x * 2 + 1].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+
         }
-        screen[(int)pos.y * WIDTH + (int)pos.x * 2].Char.AsciiChar = 219;
-        screen[(int)pos.y * WIDTH + (int)pos.x * 2].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-        screen[(int)pos.y * WIDTH + (int)pos.x * 2 + 1].Char.AsciiChar = 219;
-        screen[(int)pos.y * WIDTH + (int)pos.x * 2 + 1].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
     
         
-
 
         screen[WIDTH * HEIGHT - 1].Char.AsciiChar = '\0';
         WriteConsoleOutput(hConsole, screen, buffer_size, screen_pos, &write_region);

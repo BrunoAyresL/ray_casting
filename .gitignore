@@ -5,3 +5,6 @@ raycast.c
 eq.exe
 eq.c
 .vscode/launch.json
+csl_render.exe
+csl_render.c
+texture.c
